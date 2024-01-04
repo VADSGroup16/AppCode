@@ -37,7 +37,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Header with image
-st.image('recruitment_image.jpg', use_column_width=True)  # Replace 'recruitment_image.jpg' with your image file
+st.image('recruitment_process.jpg', use_column_width=True)  # Replace 'recruitment_image.jpg' with your image file
 
 # Create columns for the input form and the results
 col1, col2 = st.columns((1, 2))

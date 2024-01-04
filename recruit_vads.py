@@ -1,14 +1,33 @@
 import streamlit as st
+from PIL import Image
+import base64
 
-# Set page config to widen the layout
+# Function to get base64 of an image
+def get_image_base64(path):
+    with open(path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+# Set page config
 st.set_page_config(layout="wide")
 
-# Display the logo and header side-by-side
-col1, col2 = st.columns([1, 3])
-with col1:
-    st.image("recruitment_logo.png", width=200)  # Adjust path and width as needed
-with col2:
-    st.title('Recruitment Dashboard')
+# Convert the uploaded image to base64
+background_image_base64 = get_image_base64("recruitment_process")
+
+# Custom CSS to set the background image
+background_style = f"""
+<style>
+.stApp {{
+    background-image: url("data:image/jpg;base64,{background_image_base64}");
+    background-size: cover;
+}}
+</style>
+"""
+
+# Inject custom CSS with the background
+st.markdown(background_style, unsafe_allow_html=True)
+
+# Continue with the rest of your Streamlit app code
+st.title('Recruitment Dashboard')
 
 # Using columns to create a side-by-side layout for the form and candidate list
 form_col, candidates_col = st.columns(2)

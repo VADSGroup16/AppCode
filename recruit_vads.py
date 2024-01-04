@@ -11,7 +11,7 @@ def get_image_base64(path):
 st.set_page_config(layout="wide")
 
 # Convert the uploaded image to base64
-background_image_base64 = get_image_base64("recruitment_process")
+background_image_base64 = get_image_base64("recruitment_process.jpg")
 
 # Custom CSS to set the background image
 background_style = f"""

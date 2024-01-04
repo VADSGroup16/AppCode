@@ -7,7 +7,7 @@ def get_image(image_path):
     return Image.open(image_path)
 
 # Set the page configuration to wide mode with a page title and icon
-st.set_page_config(layout="wide", page_title="Recruit VADS", page_icon=get_image("recruitment_logo.png))
+st.set_page_config(layout="wide", page_title="Recruit VADS", page_icon=get_image("recruitment_logo.png"))
 
 # Custom CSS for styling
 st.markdown("""
@@ -42,7 +42,7 @@ st.markdown("""
         margin: 10px 0px;
     }
     .stApp {
-        background-image: url("/mnt/data/recruitment_background.png");
+        background-image: url("/mnt/data/recruitment_process.jpg");
         background-size: cover;
         background-repeat: no-repeat;
         background-attachment: fixed;
@@ -51,7 +51,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Header image
-header_image = get_image("/mnt/data/recruit_vads_logo.png")
+header_image = get_image("recruitment_logo.png")
 st.image(header_image, use_column_width='auto')
 
 # Main app interface
@@ -73,5 +73,5 @@ with col2:
         st.success("Candidates loading...")
 
 # Footer image
-footer_image = get_image("/mnt/data/recruitment_footer.png")
+footer_image = get_image("recruitment_process.png")
 st.image(footer_image, use_column_width='auto')

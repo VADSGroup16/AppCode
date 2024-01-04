@@ -6,7 +6,7 @@ st.set_page_config(layout="wide")
 # Display the logo and header side-by-side
 col1, col2 = st.columns([1, 3])
 with col1:
-    st.image("Recruitment_logo.png", width=200)  # Adjust path and width as needed
+    st.image("recruitment_logo.png", width=200)  # Adjust path and width as needed
 with col2:
     st.title('Recruitment Dashboard')
 

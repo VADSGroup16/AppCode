@@ -1,12 +1,12 @@
 import streamlit as st
+from PIL import Image
 
-# Function to load images into the Streamlit cache
-@st.cache(allow_output_mutation=True)
+# First, define the get_image function
+@st.cache
 def get_image(image_path):
-    from PIL import Image
     return Image.open(image_path)
 
-# Set the page configuration to wide mode with a page title and icon
+# Then, immediately set the page configuration
 st.set_page_config(layout="wide", page_title="Recruit VADS", page_icon=get_image("recruitment_logo.png"))
 
 # Custom CSS for styling

@@ -7,7 +7,7 @@ def get_image(image_path):
     return Image.open(image_path)
 
 # Set the page configuration to wide mode with a page title and icon
-st.set_page_config(layout="wide", page_title="Recruit VADS", page_icon=get_image("/mnt/data/recruit_vads_icon.png"))
+st.set_page_config(layout="wide", page_title="Recruit VADS", page_icon=get_image("recruitment_logo.png))
 
 # Custom CSS for styling
 st.markdown("""

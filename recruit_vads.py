@@ -1,18 +1,24 @@
 import streamlit as st
 
-# Define the layout of the app and set a title
-st.set_page_config(layout="wide", page_title="Recruit VADS")
+# Function to load images into the Streamlit cache
+@st.cache(allow_output_mutation=True)
+def get_image(image_path):
+    from PIL import Image
+    return Image.open(image_path)
 
-# Custom CSS to inject into Streamlit
+# Set the page configuration to wide mode with a page title and icon
+st.set_page_config(layout="wide", page_title="Recruit VADS", page_icon=get_image("/mnt/data/recruit_vads_icon.png"))
+
+# Custom CSS for styling
 st.markdown("""
 <style>
     .big-font {
         font-size:30px !important;
-        color: #0e76a8;  /* A LinkedIn-like blue color */
+        color: #ffffff;  /* White color for text */
         font-weight: bold;
     }
     .apply-btn {
-        background-color: #ff6347;  /* A tomato-like color */
+        background-color: #0e76a8;  /* A LinkedIn-like blue color */
         color: white;
         padding: 10px 24px;
         margin: 10px 0px;
@@ -21,7 +27,7 @@ st.markdown("""
         cursor: pointer;
     }
     .apply-btn:hover {
-        background-color: #ff4500;
+        background-color: #0056b3;  /* A darker blue for hover effect */
     }
     .streamlit-input {
         border: 2px solid #0e76a8;
@@ -30,38 +36,42 @@ st.markdown("""
     .streamlit-table {
         margin-top: 20px;
     }
-    .recruit-image {
-        max-height: 300px;
+    .header-image {
+        width: 100%;
+        height: auto;
+        margin: 10px 0px;
+    }
+    .stApp {
+        background-image: url("/mnt/data/recruitment_background.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Header with image
-st.image('recruitment_process.jpg', use_column_width=True)  # Replace 'recruitment_image.jpg' with your image file
+# Header image
+header_image = get_image("/mnt/data/recruit_vads_logo.png")
+st.image(header_image, use_column_width='auto')
 
-# Create columns for the input form and the results
+# Main app interface
 col1, col2 = st.columns((1, 2))
 
-# Input form in the first column
+# Job Details Form
 with col1:
     st.markdown('<p class="big-font">Job Opening Details</p>', unsafe_allow_html=True)
-    role = st.text_input("", placeholder="Role", key="role", help="Enter the job role")
-    experience = st.text_input("", placeholder="Experience", key="experience", help="Enter the required experience")
-    certifications = st.text_input("", placeholder="Certifications", key="certifications", help="Enter the required certifications")
-    skills = st.text_input("", placeholder="Skills", key="skills", help="Enter the required skills")
-    if st.button("Apply", key="apply", help="Click to apply and find relevant candidates", on_click=None):
-        st.markdown('<p class="big-font" style="color: green;">Applied Successfully!</p>', unsafe_allow_html=True)
+    role = st.text_input("Role", max_chars=50)
+    experience = st.text_input("Experience", max_chars=50)
+    certifications = st.text_input("Certifications", max_chars=50)
+    skills = st.text_input("Skills", max_chars=50)
+    apply_button = st.button("Apply", key="apply")
 
-# Results area in the second column
+# Candidate Results
 with col2:
-    st.markdown('<p class="big-font">Relevant candidates</p>', unsafe_allow_html=True)
-    if st.session_state.get("apply", False):  # Check if the 'Apply' button was clicked
-        # Example static data (you would replace this with actual search results)
-        candidate_data = [
-            {"Candidate name": "Alice Johnson", "Contact details": "alice@example.com", "Relevancy score": "89%"},
-            {"Candidate name": "Bob Smith", "Contact details": "bob@example.com", "Relevancy score": "85%"},
-            # Add more candidate data here
-        ]
-        st.table(candidate_data)
-    else:
-        st.write("Apply to see relevant candidates")
+    st.markdown('<p class="big-font">Relevant Candidates</p>', unsafe_allow_html=True)
+    if apply_button:
+        st.success("Candidates loading...")
+
+# Footer image
+footer_image = get_image("/mnt/data/recruitment_footer.png")
+st.image(footer_image, use_column_width='auto')

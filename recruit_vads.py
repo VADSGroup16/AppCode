@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Function to simulate fetching candidate data
-def fetch_candidates(role, experience, certifications, skills):
+def fetch_candidates(role, experience, skills):
     # Dummy data for the example
     return pd.DataFrame({
         'Candidate Name': ['Alice Smith', 'Bob Jones', 'Carol Johnson'],

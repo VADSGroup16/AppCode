@@ -28,14 +28,11 @@ with col1:
             st.session_state['role'] = ''
         if 'experience' not in st.session_state:
             st.session_state['experience'] = ''
-        if 'certifications' not in st.session_state:
-            st.session_state['certifications'] = ''
         if 'skills' not in st.session_state:
             st.session_state['skills'] = ''
 
         role = st.text_input("Role", value=st.session_state['role'])
         experience = st.text_input("Experience", value=st.session_state['experience'])
-        certifications = st.text_input("Certifications", value=st.session_state['certifications'])
         skills = st.text_input("Skills", value=st.session_state['skills'])
         
         # Place Apply and Clear buttons side by side
@@ -45,7 +42,6 @@ with col1:
         if clear.button("Clear"):
             st.session_state['role'] = ''
             st.session_state['experience'] = ''
-            st.session_state['certifications'] = ''
             st.session_state['skills'] = ''
             st.session_state['submitted'] = False
 
@@ -55,7 +51,6 @@ with col2:
         candidates = fetch_candidates(
             st.session_state['role'], 
             st.session_state['experience'], 
-            st.session_state['certifications'], 
             st.session_state['skills']
         )
         st.dataframe(candidates)

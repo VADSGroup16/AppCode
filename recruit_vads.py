@@ -15,7 +15,7 @@ st.set_page_config(page_title="Recruit VADS", layout="wide")
 
 # Display the header image in the middle of the page
 header_image_path = "Header.png"  # Path to the header image file
-st.image(header_image_path, width=700)  # Adjust the width to fit the screen
+st.image(header_image_path, width=300)  # Adjust the width to fit the screen
 
 # Create a two-column layout for the form and candidates table
 col1, col2 = st.columns([1, 2])

@@ -20,37 +20,34 @@ st.image(header_image_path, width=700)
 # Create a two-column layout for the form and candidates table
 col1, col2 = st.columns([1, 2])
 
-# Initialize session states for form fields and submission status
-if 'role' not in st.session_state:
-    st.session_state['role'] = ''
-if 'experience' not in st.session_state:
-    st.session_state['experience'] = ''
-if 'skills' not in st.session_state:
-    st.session_state['skills'] = ''
-if 'submitted' not in st.session_state:
+# Initialize or reset session state
+if 'form_data' not in st.session_state:
+    st.session_state['form_data'] = {'role': '', 'experience': '', 'skills': ''}
     st.session_state['submitted'] = False
+
+def clear_form():
+    st.session_state.form_data = {'role': '', 'experience': '', 'skills': ''}
+    st.session_state.submitted = False
 
 with col1:
     with st.container():
-        role = st.text_input("Role", value=st.session_state['role'])
-        experience = st.text_input("Experience", value=st.session_state['experience'])
-        skills = st.text_input("Skills", value=st.session_state['skills'])
+        form_data = st.session_state.form_data
+        form_data['role'] = st.text_input("Role", value=form_data['role'])
+        form_data['experience'] = st.text_input("Experience", value=form_data['experience'])
+        form_data['skills'] = st.text_input("Skills", value=form_data['skills'])
         
         apply, clear = st.columns(2)
         if apply.button("Apply"):
-            st.session_state['submitted'] = True
+            st.session_state.submitted = True
         if clear.button("Clear"):
-            st.session_state['role'] = ''
-            st.session_state['experience'] = ''
-            st.session_state['skills'] = ''
-            st.session_state['submitted'] = False  # Also reset the submission state
+            clear_form()
 
 with col2:
-    if st.session_state['submitted']:
+    if st.session_state.submitted:
         candidates = fetch_candidates(
-            st.session_state['role'], 
-            st.session_state['experience'], 
-            st.session_state['skills']
+            form_data['role'], 
+            form_data['experience'], 
+            form_data['skills']
         )
         st.dataframe(candidates)
     else:

@@ -17,41 +17,41 @@ st.image(header_image_path, width=700)
 
 col1, col2 = st.columns([1, 2])
 
-# Define session state keys
-if 'role' not in st.session_state:
-    st.session_state.role = ''
-if 'experience' not in st.session_state:
-    st.session_state.experience = ''
-if 'skills' not in st.session_state:
-    st.session_state.skills = ''
-if 'clear_form' not in st.session_state:
-    st.session_state.clear_form = False
-if 'submitted' not in st.session_state:
-    st.session_state.submitted = False
+# Initialize or reset session state
+if 'form_data' not in st.session_state:
+    st.session_state['form_data'] = {'role': '', 'experience': '', 'skills': ''}
+    st.session_state['submitted'] = False
+    st.session_state['clear_requested'] = False
+
+def clear_form():
+    st.session_state['form_data'] = {'role': '', 'experience': '', 'skills': ''}
+    st.session_state['submitted'] = False
+    st.session_state['clear_requested'] = False
 
 with col1:
     with st.container():
-        role = st.text_input("Role", value=st.session_state.role)
-        experience = st.text_input("Experience", value=st.session_state.experience)
-        skills = st.text_input("Skills", value=st.session_state.skills)
+        form_data = st.session_state['form_data']
+        form_data['role'] = st.text_input("Role", value=form_data['role'])
+        form_data['experience'] = st.text_input("Experience", value=form_data['experience'])
+        form_data['skills'] = st.text_input("Skills", value=form_data['skills'])
 
         apply, clear = st.columns(2)
         if apply.button("Apply"):
-            st.session_state.submitted = True
+            st.session_state['submitted'] = True
         if clear.button("Clear"):
-            st.session_state.clear_form = not st.session_state.clear_form
+            st.session_state['clear_requested'] = True
 
-# Reset the form fields if clear_form is toggled
-if st.session_state.clear_form:
-    st.session_state.role = ''
-    st.session_state.experience = ''
-    st.session_state.skills = ''
-    st.session_state.submitted = False
-    st.experimental_rerun()
+# Clear form if requested
+if st.session_state['clear_requested']:
+    clear_form()
 
 with col2:
-    if st.session_state.submitted:
-        candidates = fetch_candidates(st.session_state.role, st.session_state.experience, st.session_state.skills)
+    if st.session_state['submitted']:
+        candidates = fetch_candidates(
+            form_data['role'], 
+            form_data['experience'], 
+            form_data['skills']
+        )
         st.dataframe(candidates)
     else:
         st.write("Please input job details and click 'Apply' to show relevant candidates.")

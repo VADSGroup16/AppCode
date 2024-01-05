@@ -1,39 +1,30 @@
 import streamlit as st
-import pandas as pd
-import requests  # For communicating with backend server (if applicable)
 
-st.set_page_config(page_title="Recruit VADS", layout="wide")
+# Set page config to have a wide layout
+st.set_page_config(layout="wide")
 
-with st.sidebar:
-    st.title("Job Details")
-    role = st.text_input("Role")
-    experience = st.text_input("Experience")
-    certifications = st.text_input("Certifications")
-    skills = st.text_input("Skills")
-    apply_button = st.button("Apply", key="apply_sidebar")  # Note the indentation
+# Using columns to create a side-by-side layout for the form and candidate list
+left_column, right_column = st.columns([2, 3])
 
-def process_job_details(role, experience, certifications, skills):
-    # Replace this with your logic to retrieve relevant candidates
-    # If using a backend server, make requests to it here
-    # For now, create a sample candidate dataframe
-    candidates_df = pd.DataFrame({
-        "Name": ["John Doe", "Jane Smith", "Bob Johnson"],
-        "Email": ["john@example.com", "jane@example.com", "bob@example.com"],
-        "Relevancy Score": [85, 92, 78]
-    })
-    return candidates_df
+# Left column for user input
+with left_column:
+    st.header("Job Opening Details")
+    with st.form(key='job_details'):
+        role = st.text_input("Role")
+        experience = st.text_input("Experience")
+        certifications = st.text_input("Certifications")
+        skills = st.text_input("Skills")
+        submitted = st.form_submit_button("Apply")
+    if submitted:
+        st.success("Details submitted successfully!")
 
-with st.container():
-    st.title("Job Opening Details")
-    # Display job details based on user input (replace with actual data)
-    st.write("Role:", role)
-    st.write("Experience:", experience)
+# Right column for displaying candidates
+with right_column:
+    st.header("Relevant Candidates")
+    # Placeholder for displaying candidates
+    if submitted:
+        # After submission, you would normally retrieve and display relevant candidates
+        st.write("Displaying relevant candidates...") # replace with actual data retrieval and display
 
-    if apply_button:
-        candidates_df = process_job_details(role, experience, certifications, skills)
-        st.table(candidates_df)
-
-    st.button("Apply", key="apply_main")  # Note the indentation
-
-if __name__ == "__main__":
-    st.run()
+# Below your columns, you can display the footer or additional information
+st.write("Output with relevancy score will be shown.")

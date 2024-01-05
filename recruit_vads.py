@@ -16,8 +16,8 @@ def fetch_candidates(role, experience, certifications, skills):
 st.set_page_config(layout="wide", page_title="Recruit VADS")
 
 # Insert logo at the top
-logo_path = "recruit_logo.png"  # Path to the logo image file
-process_img_path = "recruit_process.jpg"  # Path to the process image file
+logo_path = "recruitment_logo.png"  # Path to the logo image file
+process_img_path = "recruitment_process.jpg"  # Path to the process image file
 
 # Place the logo in a container to prevent stretching
 with st.container():

@@ -13,15 +13,17 @@ def fetch_candidates(role, experience, certifications, skills):
 # Set page configuration
 st.set_page_config(page_title="Recruit VADS", layout="wide")
 
-# Display the header image in the middle of the page
+# Header image
 header_image_path = "Header.png"  # Path to the header image file
-st.image(header_image_path, width=600)
+# Create columns to center the header image
+left_spacer, header_col, right_spacer = st.columns([1, 2, 1])
+with header_col:
+    st.image(header_image_path, use_column_width=True)  # The use_column_width parameter scales the image to fit the column
 
 # Create a two-column layout for the form and candidates table
 col1, col2 = st.columns([1, 2])
 
 with col1:
-    # Using container to keep the form compact
     with st.container():
         # Initialize session states for form fields
         if 'role' not in st.session_state:
@@ -50,16 +52,11 @@ with col1:
                 st.session_state['skills'] = ''
                 st.experimental_rerun()
 
-# The right column will display the candidates
 with col2:
     if submitted:
-        # Simulate fetching data based on form input (this would be your actual data retrieval logic)
         candidates = fetch_candidates(role, experience, certifications, skills)
-        # Create a dataframe and display it on the right column
         st.dataframe(candidates)
     else:
-        # Instructions or placeholder content
         st.write("Please input job details and click 'Apply' to show relevant candidates.")
 
-# Footer
 st.caption("Output with relevancy score will be shown.")

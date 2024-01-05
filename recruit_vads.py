@@ -19,39 +19,31 @@ st.set_page_config(layout="wide", page_title="Recruit VADS")
 logo_path = "recruitment_logo.png"  # Path to the logo image file
 process_img_path = "recruitment_process.jpg"  # Path to the process image file
 
-# Place the logo in a container to prevent stretching
-with st.container():
-    st.image(logo_path, width=500)  # Adjust the width as needed
-
-# Create two columns for the job details form and the candidates display
-col1, col2 = st.columns([3, 2])
-
-# Column for job details form
+# Display logo and header
+col1, col2, col3 = st.columns([1, 5, 1])
 with col1:
-    st.header("Job Opening Details")
-    with st.form(key='job_details'):
-        role = st.text_input("Role")
-        experience = st.text_input("Experience")
-        certifications = st.text_input("Certifications")
-        skills = st.text_area("Skills", height=100)
-        submit_button = st.form_submit_button("Apply")
-
-# Column for candidates
+    st.image(logo_path, width=200)  # Adjust the width as needed
 with col2:
-    st.header("Relevant Candidates")
-    # Initialize an empty dataframe to hold candidates
-    candidates_df = pd.DataFrame()
+    st.header("Recruitment Dashboard")
 
-    # Display a message or placeholder before the form is submitted
-    if not submit_button:
-        st.write("Please enter job details and click 'Apply' to show relevant candidates.")
-    # If the form is submitted, you can display the candidates here
-    else:
+# Create a single container for the job details form and the candidates display
+with st.container():
+    # Column for job details form
+    with st.form(key='job_details'):
+        role = st.text_input("Role", max_chars=50)
+        experience = st.text_input("Experience", max_chars=50)
+        certifications = st.text_input("Certifications", max_chars=50)
+        skills = st.text_input("Skills", max_chars=50)
+        submit_button = st.form_submit_button("Apply")
+        # The form will be processed here
+
+    # Display candidates or the process image based on whether the form has been submitted
+    if submit_button:
         # Simulate fetching candidates
         candidates_df = fetch_candidates(role, experience, certifications, skills)
         st.dataframe(candidates_df)
-
-# Place the process image below the columns
-st.image(process_img_path, use_column_width=True)
+    else:
+        # Display process image as a placeholder
+        st.image(process_img_path, use_column_width=True)
 
 # Reminder: Replace the simulated fetch_candidates function with actual data retrieval logic.

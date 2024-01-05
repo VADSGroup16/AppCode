@@ -1,61 +1,36 @@
 import streamlit as st
-from PIL import Image
-import base64
+import pandas as pd
+import requests  # For communicating with backend server (if applicable)
 
-# Function to get base64 of an image
-def get_image_base64(path):
-    with open(path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode()
-
-# Set page config
-st.set_page_config(layout="wide")
-
-# Convert the uploaded image to base64
-background_image_base64 = get_image_base64("recruitment_process.jpg")
-
-# Custom CSS to set the background image
-background_style = f"""
-<style>
-.stApp {{
-    background-image: url("data:image/jpg;base64,{background_image_base64}");
-    background-size: cover;
-}}
-</style>
-"""
-
-# Inject custom CSS with the background
-st.markdown(background_style, unsafe_allow_html=True)
-
-# Continue with the rest of your Streamlit app code
-st.title('Recruitment Dashboard')
-
-# Using columns to create a side-by-side layout for the form and candidate list
-form_col, candidates_col = st.columns(2)
-
-with form_col:
-    st.header('Job Opening Details')
-    # Create a form where the user can input job details
-    with st.form(key='job_details_form'):
-        role = st.text_input(label='Role')
-        experience = st.text_input(label='Experience')
-        certifications = st.text_input(label='Certifications')
-        skills = st.text_area(label='Skills', height=100)
-        submit_button = st.form_submit_button(label='Apply')
-
-with candidates_col:
-    st.header('Relevant Candidates')
-    # Display a placeholder for candidate data
-    st.table([{'Candidate Name': '---', 'Contact Details': '---', 'Relevancy Score': '---'}])
-
-# Check if the form has been submitted
-if submit_button:
-    # Placeholder for search logic to find relevant candidates
-    # Here you would typically fetch and process data from a database or API
-    candidates = [
-        {'Candidate Name': 'Alice Smith', 'Contact Details': 'alice@example.com', 'Relevancy Score': 89},
-        {'Candidate Name': 'Bob Brown', 'Contact Details': 'bob@example.com', 'Relevancy Score': 85},
-        # ... add more candidates as needed
-    ]
+st.set_page_config(page_title="Recruit VADS", layout="wide")
+with st.sidebar:
+    st.title("Job Details")
+    role = st.text_input("Role")
+    experience = st.text_input("Experience")
+    certifications = st.text_input("Certifications")
+    skills = st.text_input("Skills")
     
-    # Update the candidate list with real data
-    candidates_col.table(candidates)
+    apply_button = st.button("Apply")
+def process_job_details(role, experience, certifications, skills):
+    # Replace this with your logic to retrieve relevant candidates
+    # If using a backend server, make requests to it here
+    # For now, create a sample candidate dataframe
+    candidates_df = pd.DataFrame({
+        "Name": ["John Doe", "Jane Smith", "Bob Johnson"],
+        "Email": ["john@example.com", "jane@example.com", "bob@example.com"],
+        "Relevancy Score": [85, 92, 78]
+    })
+    return candidates_df
+with st.container():
+    st.title("Job Opening Details")
+    # Display job details based on user input (replace with actual data)
+    st.write("Role:", role)
+    st.write("Experience:", experience)
+
+    if apply_button:
+        candidates_df = process_job_details(role, experience, certifications, skills)
+        st.table(candidates_df)
+
+    st.button("Apply")  # This button will trigger the processing function
+if __name__ == "__main__":
+    st.run()

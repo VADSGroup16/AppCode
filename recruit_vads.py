@@ -11,7 +11,7 @@ def fetch_candidates(role, experience, skills):
     })
 
 # Set page configuration
-st.set_page_config(page_title="Recruit VADS")
+st.set_page_config(page_title="Recruit VADS", layout="wide")
 
 # Display the header image in the middle of the page
 header_image_path = "Header.png"  # Path to the header image file
@@ -20,35 +20,38 @@ st.image(header_image_path, width=700)
 # Create a two-column layout for the form and candidates table
 col1, col2 = st.columns([1, 2])
 
-# Initialize or reset session state
-if 'form_data' not in st.session_state:
-    st.session_state['form_data'] = {'role': '', 'experience': '', 'skills': ''}
+# Initialize session state for form data and submission state
+if 'role' not in st.session_state:
+    st.session_state['role'] = ''
+if 'experience' not in st.session_state:
+    st.session_state['experience'] = ''
+if 'skills' not in st.session_state:
+    st.session_state['skills'] = ''
+if 'submitted' not in st.session_state:
     st.session_state['submitted'] = False
 
+# Function to clear the form
 def clear_form():
-    st.session_state.form_data = {'role': '', 'experience': '', 'skills': ''}
-    st.session_state.submitted = False
+    st.session_state['role'] = ''
+    st.session_state['experience'] = ''
+    st.session_state['skills'] = ''
+    st.session_state['submitted'] = False
 
 with col1:
     with st.container():
-        form_data = st.session_state.form_data
-        form_data['role'] = st.text_input("Role", value=form_data['role'])
-        form_data['experience'] = st.text_input("Experience", value=form_data['experience'])
-        form_data['skills'] = st.text_input("Skills", value=form_data['skills'])
+        role = st.text_input("Role", value=st.session_state['role'], key='role')
+        experience = st.text_input("Experience", value=st.session_state['experience'], key='experience')
+        skills = st.text_input("Skills", value=st.session_state['skills'], key='skills')
         
         apply, clear = st.columns(2)
         if apply.button("Apply"):
-            st.session_state.submitted = True
+            st.session_state['submitted'] = True
         if clear.button("Clear"):
             clear_form()
 
 with col2:
-    if st.session_state.submitted:
-        candidates = fetch_candidates(
-            form_data['role'], 
-            form_data['experience'], 
-            form_data['skills']
-        )
+    if st.session_state['submitted']:
+        candidates = fetch_candidates(st.session_state['role'], st.session_state['experience'], st.session_state['skills'])
         st.dataframe(candidates)
     else:
         st.write("Please input job details and click 'Apply' to show relevant candidates.")

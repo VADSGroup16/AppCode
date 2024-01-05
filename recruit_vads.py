@@ -1,49 +1,47 @@
 import streamlit as st
 import pandas as pd
 
-# Function to simulate fetching candidate data
-def fetch_candidates(role, experience, certifications, skills):
-    # In a real app, you would query a database or an API here
-    # This is just dummy data
-    candidates_data = [
-        {'Candidate Name': 'Alice Smith', 'Contact Details': 'alice@example.com', 'Relevancy Score': 89},
-        {'Candidate Name': 'Bob Jones', 'Contact Details': 'bob@example.com', 'Relevancy Score': 85},
-        {'Candidate Name': 'Carol Johnson', 'Contact Details': 'carol@example.com', 'Relevancy Score': 93},
-    ]
-    return pd.DataFrame(candidates_data)
+# Dummy function to simulate candidate retrieval
+def fetch_candidates():
+    # This would be replaced with your actual data retrieval logic
+    return pd.DataFrame({
+        'Candidate Name': ['Alice Smith', 'Bob Jones', 'Carol Johnson'],
+        'Contact Details': ['alice@example.com', 'bob@example.com', 'carol@example.com'],
+        'Relevancy Score': [89, 85, 93]
+    })
 
 # Set page configuration
 st.set_page_config(layout="wide", page_title="Recruit VADS")
 
-# Insert logo at the top
-logo_path = "recruitment_logo.png"  # Path to the logo image file
-process_img_path = "recruitment_process.jpg"  # Path to the process image file
+# Display logo in a small column
+logo_col, _, title_col = st.columns([1, 10, 20])
+with logo_col:
+    st.image("recruitment_logo.png", width=100)  # Adjust width as per your logo's aspect ratio
 
-# Display logo and header
-col1, col2, col3 = st.columns([1, 5, 1])
-with col1:
-    st.image(logo_path, width=200)  # Adjust the width as needed
-with col2:
-    st.header("Recruitment Dashboard")
+# Add the app title next to the logo
+with title_col:
+    st.markdown("<h1 style='text-align: center;'>Recruitment Dashboard</h1>", unsafe_allow_html=True)
 
-# Create a single container for the job details form and the candidates display
-with st.container():
-    # Column for job details form
-    with st.form(key='job_details'):
-        role = st.text_input("Role", max_chars=50)
-        experience = st.text_input("Experience", max_chars=50)
-        certifications = st.text_input("Certifications", max_chars=50)
-        skills = st.text_input("Skills", max_chars=50)
+# Input form and candidate display in columns
+form_col, candidates_col = st.columns([2, 3])
+
+# Input form in one column
+with form_col:
+    with st.form('job_details'):
+        role = st.text_input("Role")
+        experience = st.number_input("Experience (in years)", min_value=0, max_value=50, step=1)
+        certifications = st.text_input("Certifications")
+        skills = st.text_input("Skills")
         submit_button = st.form_submit_button("Apply")
-        # The form will be processed here
 
-    # Display candidates or the process image based on whether the form has been submitted
+# Display relevant candidates in the other column
+with candidates_col:
     if submit_button:
-        # Simulate fetching candidates
-        candidates_df = fetch_candidates(role, experience, certifications, skills)
-        st.dataframe(candidates_df)
+        # Retrieve and display candidates
+        candidates_df = fetch_candidates()
+        st.dataframe(candidates_df.style.format({'Contact Details': lambda x: x.split('@')[0] + '@...'}))
     else:
-        # Display process image as a placeholder
-        st.image(process_img_path, use_column_width=True)
+        st.write("Candidates will appear here once you submit the job details.")
 
-# Reminder: Replace the simulated fetch_candidates function with actual data retrieval logic.
+# Ensure the footer is at the bottom of the page
+st.write("Page 1 of 1")

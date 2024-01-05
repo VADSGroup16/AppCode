@@ -13,9 +13,20 @@ def fetch_candidates(role, experience, certifications, skills):
 # Set page configuration
 st.set_page_config(page_title="Recruit VADS", layout="wide")
 
-# Display the header image in the middle of the page
-header_image_path = "Header.png"  # Path to the header image file
-st.image(header_image_path, width=300)  # Adjust the width to fit the screen
+
+# Function to get base64 of an image
+def get_image_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
+
+# Convert the header image to base64
+header_image_base64 = get_image_base64("Header.png")
+
+# Display the header image with specific width and height
+st.markdown(
+    f'<div style="text-align: center;"><img src="data:image/png;base64,{header_image_base64}" style="width: 400px; height: 150px;"></div>', 
+    unsafe_allow_html=True
+)
 
 # Create a two-column layout for the form and candidates table
 col1, col2 = st.columns([1, 2])

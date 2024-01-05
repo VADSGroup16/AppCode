@@ -9,6 +9,7 @@ with st.sidebar:
     experience = st.text_input("Experience")
     certifications = st.text_input("Certifications")
     skills = st.text_input("Skills")
+	st.button("Apply", key="apply_sidebar") 
     
     apply_button = st.button("Apply")
 def process_job_details(role, experience, certifications, skills):
@@ -31,6 +32,7 @@ with st.container():
         candidates_df = process_job_details(role, experience, certifications, skills)
         st.table(candidates_df)
 
-    st.button("Apply")  # This button will trigger the processing function
+    st.button("Apply", key="apply_main")  # This button will trigger the processing function
+	
 if __name__ == "__main__":
     st.run()

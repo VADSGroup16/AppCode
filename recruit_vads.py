@@ -25,7 +25,7 @@ def get_relevancy_score(job_title, skills, experience):
     # Create a DataFrame to display results
     output = pd.DataFrame(resume_data, columns=['Candidate Name', 'Email ID'])
     output['Relevancy Score'] = relevancy_scores
-    return output.sort_values(by='Relevancy Score', ascending=False)
+    return output.sort_values(by='Relevancy Score', ascending=False).head(5)
 
 # Set page configuration
 st.set_page_config(page_title="Recruit VADS", layout="wide")

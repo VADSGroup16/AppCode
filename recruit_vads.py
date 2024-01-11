@@ -8,7 +8,7 @@ model = pickle.load(open('Recruit_VADS_model.pkl', 'rb'))
 vectorizer = pickle.load(open('Tfidf_Vectorizer.pkl', 'rb'))
 
 # Load your resume data
-resume_data = pd.read_csv('Modifiedresumedata_data.csv')
+candidates = pd.read_csv('Modifiedresumedata_data.csv')
 
 # Define a function to get relevancy score for each candidate
 def get_relevancy_scores(job_title, skills, experience):
@@ -20,8 +20,8 @@ def get_relevancy_scores(job_title, skills, experience):
     # Predict the relevancy scores using the trained model
     relevancy_scores = model.predict(input_vector)
     output = pd.DataFrame({
-        'Candidate Name': candidates['name'],  # Replace 'name' with the actual column name
-        'Contact Details': candidates['email'],  # Replace 'email' with the actual column name
+        'Candidate Name': candidates['Candiate Name'],  # Replace 'name' with the actual column name
+        'Contact Details': candidates['Email ID'],  # Replace 'email' with the actual column name
         'Relevancy Score': relevancy_scores
     } )
     

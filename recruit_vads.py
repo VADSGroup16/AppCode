@@ -6,14 +6,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 model = pickle.load(open('Recruit_VADS_model.pkl', 'rb'))
 vectorizer = pickle.load(open('Tfidf_Vectorizer.pkl', 'rb'))
 
-# Function to simulate fetching candidate data
-def fetch_candidates(role, experience, skills):
-    return pd.DataFrame({
-        'Candidate Name': ['Alice Smith', 'Bob Jones', 'Carol Johnson'],
-        'Contact Details': ['alice@example.com', 'bob@example.com', 'carol@example.com'],
-        'Relevancy Score': [95, 90, 88]
-    })
-
 # Set page configuration
 st.set_page_config(page_title="Recruit VADS", layout="wide")
 
@@ -41,33 +33,32 @@ with col1:
         form_data['skills'] = st.text_input("Skills", value=form_data['skills'])
 
         apply, clear = st.columns(2)
-        if apply.button("Apply"):
-            st.session_state['submitted'] = True
-        if clear.button("Clear"):
-            st.session_state['clear_requested'] = True
-
-# Clear form if requested
-if st.session_state['clear_requested']:
-    clear_form()
+        with apply:
+            if st.button("Apply"):
+                st.session_state['submitted'] = True
+        with clear:
+            if st.button("Clear"):
+                clear_form()
 
 with col2:
     if st.session_state['submitted']:
-        
-        job_details = f"{role} {experience} {certifications} {skills}"
-    job_details_vectorized = vectorizer.transform([job_details])
+        # Process input data
+        job_details = f"{form_data['role']} {form_data['experience']} {form_data['skills']}"
+        job_details_vectorized = vectorizer.transform([job_details])
 
-    # Make prediction
-    relevancy_scores = model.predict(job_details_vectorized)
+        # Make prediction
+        relevancy_scores = model.predict(job_details_vectorized)
 
-    # Assuming resume_data is preloaded with candidate names and contact details
-    resume_data['relevancy_score'] = relevancy_scores
+        # Assuming resume_data is preloaded with candidate names and contact details
+        resume_data = pd.DataFrame()  # Replace with your actual dataframe
+        resume_data['relevancy_score'] = relevancy_scores
 
-    # Sort the dataframe based on relevancy score
-    sorted_resumes = resume_data.sort_values(by='relevancy_score', ascending=False)
+        # Sort the dataframe based on relevancy score
+        sorted_resumes = resume_data.sort_values(by='relevancy_score', ascending=False)
 
-    # Display results: Show sorted resumes with relevancy scores
-    st.write("Relevant candidates:")
-    st.dataframe(sorted_resumes)
+        # Display results: Show sorted resumes with relevancy scores
+        st.write("Relevant candidates:")
+        st.dataframe(sorted_resumes)
     else:
         st.write("Please input job details and click 'Apply' to show relevant candidates.")
 

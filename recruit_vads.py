@@ -60,8 +60,8 @@ with col1:
         form_data = st.session_state['form_data']
         form_data['Role'] = st.text_input("Role", value=form_data['Role'])
         form_data['Experience'] = st.text_input("Experience", value=form_data['Experience'])
-        form_data['Certifications'] = st.text_area("Certifications", value=form_data['Certifications'])
-        form_data['Skills'] = st.text_area("Skills", value=form_data['Skills'])
+        form_data['Certifications'] = st.text_input("Certifications", value=form_data['Certifications'])
+        form_data['Skills'] = st.text_input("Skills", value=form_data['Skills'])
 
         apply, clear = st.columns(2)
         if apply.button("Apply"):

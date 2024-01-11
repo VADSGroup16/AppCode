@@ -9,7 +9,7 @@ vectorizer = pickle.load(open('Tfidf_Vectorizer.pkl', 'rb'))
 
 # Load your resume data
 # Adjust the path and columns as per your actual data file
-resume_data = pd.read_csv('path_to_resume_data.csv')
+resume_data = pd.read_csv('Modifiedresumedata_data.csv')
 
 # Define a function to get relevancy score
 def get_relevancy_score(job_title, skills, experience):

@@ -3,8 +3,8 @@ import pandas as pd
 import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-model = pickle.load(open('finalized_model.sav', 'rb'))
-vectorizer = pickle.load(open('vectorizer.sav', 'rb'))
+model = pickle.load(open('Recruit_VADS_model.pkl', 'rb'))
+vectorizer = pickle.load(open('Tfidf_Vectorizer.pkl', 'rb'))
 
 # Function to simulate fetching candidate data
 def fetch_candidates(role, experience, skills):

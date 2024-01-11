@@ -52,7 +52,7 @@ with col2:
         # Assuming resume_data is preloaded with candidate names and contact details
         resume_data = pd.read_csv('Modifiedresumedata_data.csv')
         resume_data['relevancy_score'] = relevancy_scores
-        display_columns = ['candidate_name', 'contact_details', 'relevancy_score']
+        display_columns = ['Candidate Name', 'Email ID', 'relevancy_score']
         sorted_resumes_display = sorted_resumes[display_columns]
 
         # Display results: Show sorted resumes with relevancy scores, names, and contact details

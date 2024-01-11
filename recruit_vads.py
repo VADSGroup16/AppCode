@@ -12,23 +12,21 @@ candidates = pd.read_csv('Modifiedresumedata_data.csv')
 
 # Define a function to get relevancy score for each candidate
 def get_relevancy_score(job_title, skills, certification, experience):
-    # Combine the job details into a single string
-    combined_features = f"{job_title} {experience} {certification} {skills}"
-    
-    # Vectorize the combined features
-    input_vector = vectorizer.transform([combined_features])
-    
-    # Predict the relevancy scores using the trained model
-    relevancy_scores = model.predict(input_vector)
+    # Vectorize each candidate's features and predict relevancy score
+    relevancy_scores = []
+    for _, row in candidates.iterrows():
+        candidate_features = f"{job_title} {skills} {certification} {experience} {row['Resume Text']}"
+        candidate_vector = vectorizer.transform([candidate_features])
+        score = model.predict(candidate_vector)
+        relevancy_scores.append(score[0])  # Assuming model.predict returns a single score in an array
 
-    # Combine the relevancy scores with the candidates data
+    # Add relevancy scores to the candidates DataFrame
     candidates['Relevancy Score'] = relevancy_scores
     
     # Sort the candidates by the relevancy score in descending order
     sorted_candidates = candidates.sort_values(by='Relevancy Score', ascending=False)
     
-    return sorted_candidates.head(5)
-
+    return sorted_candidates.head(5)  # Return the top 5 candidates
 
 # Set page configuration
 st.set_page_config(page_title="Recruit VADS", layout="wide")

@@ -1,5 +1,10 @@
 import streamlit as st
 import pandas as pd
+import pickle
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+model = pickle.load(open('finalized_model.sav', 'rb'))
+vectorizer = pickle.load(open('vectorizer.sav', 'rb'))
 
 # Function to simulate fetching candidate data
 def fetch_candidates(role, experience, skills):
@@ -47,12 +52,22 @@ if st.session_state['clear_requested']:
 
 with col2:
     if st.session_state['submitted']:
-        candidates = fetch_candidates(
-            form_data['role'], 
-            form_data['experience'], 
-            form_data['skills']
-        )
-        st.dataframe(candidates)
+        
+        job_details = f"{role} {experience} {certifications} {skills}"
+    job_details_vectorized = vectorizer.transform([job_details])
+
+    # Make prediction
+    relevancy_scores = model.predict(job_details_vectorized)
+
+    # Assuming resume_data is preloaded with candidate names and contact details
+    resume_data['relevancy_score'] = relevancy_scores
+
+    # Sort the dataframe based on relevancy score
+    sorted_resumes = resume_data.sort_values(by='relevancy_score', ascending=False)
+
+    # Display results: Show sorted resumes with relevancy scores
+    st.write("Relevant candidates:")
+    st.dataframe(sorted_resumes)
     else:
         st.write("Please input job details and click 'Apply' to show relevant candidates.")
 

@@ -51,7 +51,7 @@ with col2:
 
         # Assuming resume_data is preloaded with candidate names and contact details
         resume_data =pd.read_csv('Modifiedresumedata_data.csv')  # Replace with your actual dataframe
-        resume_data['relevancy_score'] = relevancy_scores['Relevancy Score']
+        resume_data['relevancy_score'] = relevancy_scores
 
         # Sort the dataframe based on relevancy score
         sorted_resumes = resume_data.sort_values(by='relevancy_score', ascending=False)

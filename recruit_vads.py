@@ -17,7 +17,7 @@ def get_relevancy_score(job_title, skills, certification, experience):
     input_vector = vectorizer.transform(input_features).toarray()
     
     # Compute the cosine similarity with the model
-    similarity = model.(input_vector.T)
+    similarity = model.dot(input_vector.T)
     
     # Sort the candidates by descending order of similarity
     sorted_indices = similarity.argsort(axis=0)[::-1]

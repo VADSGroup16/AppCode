@@ -5,7 +5,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Load the model and vectorizer
-
 def load_artifacts():
     with open('Recruit_VADS_model.pkl', 'rb') as model_file:
         model = pickle.load(model_file)
@@ -14,7 +13,6 @@ def load_artifacts():
     return model, vectorizer
 
 # Load candidate data
-
 def load_candidate_data():
     return pd.read_csv('Modifiedresumedata_data.csv')
 
@@ -39,27 +37,49 @@ def predict_relevancy(vectorizer, input_data, candidate_data):
     top_candidates = candidate_data.nlargest(5, 'RelevancyScore')
     return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]
 
-# Streamlit app
-st.title('Recruit VADS Candidate Finder')
+# Streamlit UI layout
+st.set_page_config(page_title="Recruit VADS", layout="wide")
 
-# Load model and vectorizer
-model, vectorizer = load_artifacts()
+header_image_path = "Header.png"  # Adjust the path as necessary
+st.image(header_image_path, width=700)
 
-# Load candidate data
-candidate_data = load_candidate_data()
+col1, col2 = st.columns([1, 2])
+
+# Initialize or reset session state
+if 'form_data' not in st.session_state:
+    st.session_state['form_data'] = {'Role': '', 'Experience': '', 'Certifications': '', 'Skills': ''}
+    st.session_state['submitted'] = False
+
+def clear_form():
+    st.session_state['form_data'] = {'Role': '', 'Experience': '', 'Certifications': '', 'Skills': ''}
+    st.session_state['submitted'] = False
 
 # Input fields for job details
-user_input = {
-    'Role': st.text_input('Role'),
-    'Experience': st.text_input('Experience'),
-    'Certifications': st.text_area('Certifications'),
-    'Skills': st.text_area('Skills')
-}
+with col1:
+    with st.container():
+        form_data = st.session_state['form_data']
+        form_data['Role'] = st.text_input("Role", value=form_data['Role'])
+        form_data['Experience'] = st.text_input("Experience", value=form_data['Experience'])
+        form_data['Certifications'] = st.text_area("Certifications", value=form_data['Certifications'])
+        form_data['Skills'] = st.text_area("Skills", value=form_data['Skills'])
 
-# Button to find candidates
-if st.button('Find Candidates'):
-    top_candidates = predict_relevancy(vectorizer, user_input, candidate_data)
-    st.write('Top Candidate Matches:')
-    st.dataframe(top_candidates)
+        apply, clear = st.columns(2)
+        if apply.button("Apply"):
+            st.session_state['submitted'] = True
+        if clear.button("Clear"):
+            clear_form()
 
-# Run this in a terminal: streamlit run your_script.py
+# Load model and vectorizer, and candidate data
+model, vectorizer = load_artifacts()
+candidate_data = load_candidate_data()
+
+# Display results
+with col2:
+    if st.session_state['submitted']:
+        top_candidates = predict_relevancy(vectorizer, form_data, candidate_data)
+        st.write('Top Candidate Matches:')
+        st.dataframe(top_candidates)
+    else:
+        st.write("Please input job details and click 'Apply' to show relevant candidates.")
+
+st.caption("Output with relevancy score will be shown.")

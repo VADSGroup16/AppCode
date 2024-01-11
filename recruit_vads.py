@@ -2,8 +2,10 @@ import streamlit as st
 import pandas as pd
 import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
-# Function to load model and vectorizer
+# Load the model and vectorizer
+@st.cache
 def load_artifacts():
     with open('Recruit_VADS_model.pkl', 'rb') as model_file:
         model = pickle.load(model_file)
@@ -12,27 +14,31 @@ def load_artifacts():
     return model, vectorizer
 
 # Load candidate data
+@st.cache
 def load_candidate_data():
-    candidate_data_path = 'Modifiedresumedata_data.csv'
-    candidate_data = pd.read_csv(candidate_data_path)
-    return candidate_data
+    return pd.read_csv('Modifiedresumedata_data.csv')
 
-# Function to predict relevancy scores
-def predict_relevancy(model, vectorizer, input_data, candidate_data):
-    combined_input = ' '.join(input_data)
+# Predict relevancy scores
+def predict_relevancy(vectorizer, input_data, candidate_data):
+    combined_input = ' '.join([input_data['Role'], str(input_data['Experience']), 
+                               input_data['Certifications'], input_data['Skills']])
     X_input = vectorizer.transform([combined_input])
-    candidate_features = candidate_data['Skills'] + ' ' + \
-                         candidate_data['Role'] + ' ' + \
-                         candidate_data['Certification']
-    X_candidates = vectorizer.transform(candidate_features)
-    candidate_scores = model.predict(X_candidates)
+
+    # Calculate relevancy scores based on cosine similarity
+    candidate_scores = []
+    for _, row in candidate_data.iterrows():
+        candidate_combined = ' '.join([row['Role'], str(row['Experience']), 
+                                       row['Certification'], row['Skills']])
+        X_candidate = vectorizer.transform([candidate_combined])
+        score = cosine_similarity(X_input, X_candidate)
+        candidate_scores.append(score[0][0])
+
     candidate_data['RelevancyScore'] = candidate_scores
-    sorted_candidates = candidate_data.sort_values(by='RelevancyScore', ascending=False)
-    top_candidates = sorted_candidates.head(5)
-    return top_candidates
+    top_candidates = candidate_data.nlargest(5, 'RelevancyScore')
+    return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]
 
 # Streamlit app
-st.title('Recruit VADS')
+st.title('Recruit VADS Candidate Finder')
 
 # Load model and vectorizer
 model, vectorizer = load_artifacts()
@@ -41,15 +47,17 @@ model, vectorizer = load_artifacts()
 candidate_data = load_candidate_data()
 
 # Input fields for job details
-role = st.text_input('Role')
-experience = st.slider('Experience', 0, 50, 5)
-certifications = st.text_area('Certifications', height=100)
-skills = st.text_area('Skills', height=100)
+user_input = {
+    'Role': st.text_input('Role'),
+    'Experience': st.text_input('Experience'),
+    'Certifications': st.text_area('Certifications'),
+    'Skills': st.text_area('Skills')
+}
 
-# Button to apply
+# Button to find candidates
 if st.button('Find Candidates'):
-    input_data = [role, str(experience), certifications, skills]
-    top_candidates = predict_relevancy(model, vectorizer, input_data, candidate_data)
-    st.write(top_candidates)
+    top_candidates = predict_relevancy(vectorizer, user_input, candidate_data)
+    st.write('Top Candidate Matches:')
+    st.dataframe(top_candidates)
 
-# Run this in a terminal: streamlit run app.py
+# Run this in a terminal: streamlit run your_script.py

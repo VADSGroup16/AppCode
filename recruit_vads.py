@@ -11,28 +11,26 @@ vectorizer = pickle.load(open('Tfidf_Vectorizer.pkl', 'rb'))
 candidates = pd.read_csv('Modifiedresumedata_data.csv')
 
 # Define a function to get relevancy score for each candidate
-def get_relevancy_scores(role, skills, experience):
-    # The function should use 'role', 'skills', and 'experience' directly from the arguments
-    # Make sure to concatenate them correctly into a single string
-    input_features = f"{role} {skills} {experience}"
+def get_relevancy_score(job_title, skills, certification, experience):
+    # Create a vector from the input
+    input_features = [job_title, skills, certification, experience]
+    input_vector = vectorizer.transform(input_features).toarray()
+    
+    # Compute the cosine similarity with the model
+    similarity = model.dot(input_vector.T)
+    
+    # Sort the candidates by descending order of similarity
+    sorted_indices = similarity.argsort(axis=0)[::-1]
+    sorted_similarity = similarity[sorted_indices]
+    
+    # Format the output as a dataframe with candidate name, email and relevancy score
+    output = pd.DataFrame()
+    output['Candidate Name'] = resume_data['Candidate Name'][sorted_indices].squeeze()
+    output['Email ID'] = resume_data['Email ID'][sorted_indices].squeeze()
+    output['Relevancy Score'] = (sorted_similarity * 100).round(2).squeeze()
+    output['Relevancy Score'] = output['Relevancy Score'].astype(str) + '%'
+    return output
 
-    # Vectorize the input features using the TF-IDF vectorizer
-    input_vector = vectorizer.transform([input_features])
-    
-    # Predict the relevancy scores using the trained model
-    relevancy_scores = model.predict(input_vector)
-
-    # Create a DataFrame to display results
-    output = pd.DataFrame({
-        'Candidate Name': candidates['Candidate Name'],  # Make sure column names match your DataFrame's
-        'Contact Details': candidates['Email ID'],      # Make sure column names match your DataFrame's
-        'Relevancy Score': relevancy_scores.flatten()   # Flatten the array if it's two-dimensional
-    })
-    
-    # Sort the candidates by the relevancy score in descending order
-    sorted_candidates = output.sort_values(by='Relevancy Score', ascending=False)
-    
-    return sorted_candidates.head(5)
 
 # Set page configuration
 st.set_page_config(page_title="Recruit VADS", layout="wide")
@@ -71,7 +69,7 @@ with col1:
 with col2:
     if st.session_state['submitted']:
         # Get relevancy scores for each candidate
-        scores = get_relevancy_scores(form_data['role'], form_data['skills'], form_data['experience'])
+        scores = get_relevancy_scores(form_data['role'], form_data['skills'],'0',form_data['experience'])
         resume_data['Relevancy Score'] = scores
         sorted_resumes = resume_data.sort_values(by='Relevancy Score', ascending=False).head(5)
 

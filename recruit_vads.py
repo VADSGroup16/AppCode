@@ -12,24 +12,22 @@ candidates = pd.read_csv('Modifiedresumedata_data.csv')
 
 # Define a function to get relevancy score for each candidate
 def get_relevancy_score(job_title, skills, certification, experience):
-    # Create a vector from the input
-    input_features = [job_title, skills, certification, experience]
-    input_vector = vectorizer.transform(input_features).toarray()
+    # Combine the job details into a single string
+    combined_features = f"{job_title} {experience} {certification} {skills}"
     
-    # Compute the cosine similarity with the model
-    similarity = model.dot(input_vector.T)
+    # Vectorize the combined features
+    input_vector = vectorizer.transform([combined_features])
     
-    # Sort the candidates by descending order of similarity
-    sorted_indices = similarity.argsort(axis=0)[::-1]
-    sorted_similarity = similarity[sorted_indices]
+    # Predict the relevancy scores using the trained model
+    relevancy_scores = model.predict(input_vector)
+
+    # Combine the relevancy scores with the candidates data
+    candidates['Relevancy Score'] = relevancy_scores
     
-    # Format the output as a dataframe with candidate name, email and relevancy score
-    output = pd.DataFrame()
-    output['Candidate Name'] = resume_data['Candidate Name'][sorted_indices].squeeze()
-    output['Email ID'] = resume_data['Email ID'][sorted_indices].squeeze()
-    output['Relevancy Score'] = (sorted_similarity * 100).round(2).squeeze()
-    output['Relevancy Score'] = output['Relevancy Score'].astype(str) + '%'
-    return output
+    # Sort the candidates by the relevancy score in descending order
+    sorted_candidates = candidates.sort_values(by='Relevancy Score', ascending=False)
+    
+    return sorted_candidates.head(5)
 
 
 # Set page configuration

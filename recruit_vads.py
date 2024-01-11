@@ -8,24 +8,18 @@ model = pickle.load(open('Recruit_VADS_model.pkl', 'rb'))
 vectorizer = pickle.load(open('Tfidf_Vectorizer.pkl', 'rb'))
 
 # Load your resume data
-# Adjust the path and columns as per your actual data file
 resume_data = pd.read_csv('Modifiedresumedata_data.csv')
 
-# Define a function to get relevancy score
-def get_relevancy_score(job_title, skills, experience):
-    # Combine the features into a single string
-    combined_features = f"{job_title} {skills} {experience}"
+# Define a function to get relevancy score for each candidate
+def get_relevancy_scores(job_title, skills, experience):
+    relevancy_scores = []
+    for _, row in resume_data.iterrows():
+        combined_features = f"{job_title} {skills} {experience} {row['Candidate Info']}"  # Adjust as per your data columns
+        input_vector = vectorizer.transform([combined_features])
+        score = model.predict(input_vector)
+        relevancy_scores.append(score[0])  # Assuming model.predict returns a single score in an array
     
-    # Vectorize the input features
-    input_vector = vectorizer.transform([combined_features])
-    
-    # Make prediction (assuming your model's predict method returns relevancy scores)
-    relevancy_scores = model.predict(input_vector)
-
-    # Create a DataFrame to display results
-    output = pd.DataFrame(resume_data, columns=['Candidate Name', 'Email ID'])
-    output['Relevancy Score'] = relevancy_scores
-    return output.sort_values(by='Relevancy Score', ascending=False).head(5)
+    return relevancy_scores
 
 # Set page configuration
 st.set_page_config(page_title="Recruit VADS", layout="wide")
@@ -63,12 +57,14 @@ with col1:
 
 with col2:
     if st.session_state['submitted']:
-        # Process input data and get output
-        output = get_relevancy_score(form_data['role'], form_data['skills'], form_data['experience'])
+        # Get relevancy scores for each candidate
+        scores = get_relevancy_scores(form_data['role'], form_data['skills'], form_data['experience'])
+        resume_data['Relevancy Score'] = scores
+        sorted_resumes = resume_data.sort_values(by='Relevancy Score', ascending=False).head(5)
 
-        # Display results: Show sorted resumes with relevancy scores
-        st.write("Relevant candidates:")
-        st.dataframe(output)
+        # Display top 5 relevant candidates
+        st.write("Top 5 Relevant Candidates:")
+        st.dataframe(sorted_resumes)
     else:
         st.write("Please input job details and click 'Apply' to show relevant candidates.")
 

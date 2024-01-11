@@ -11,19 +11,23 @@ vectorizer = pickle.load(open('Tfidf_Vectorizer.pkl', 'rb'))
 candidates = pd.read_csv('Modifiedresumedata_data.csv')
 
 # Define a function to get relevancy score for each candidate
-def get_relevancy_scores(job_title, skills, experience):
-    input_features = f"{role} {experience} {certifications} {skills}"
-    
+def get_relevancy_scores(role, skills, experience):
+    # The function should use 'role', 'skills', and 'experience' directly from the arguments
+    # Make sure to concatenate them correctly into a single string
+    input_features = f"{role} {skills} {experience}"
+
     # Vectorize the input features using the TF-IDF vectorizer
     input_vector = vectorizer.transform([input_features])
     
     # Predict the relevancy scores using the trained model
     relevancy_scores = model.predict(input_vector)
+
+    # Create a DataFrame to display results
     output = pd.DataFrame({
-        'Candidate Name': candidates['Candiate Name'],  # Replace 'name' with the actual column name
-        'Contact Details': candidates['Email ID'],  # Replace 'email' with the actual column name
-        'Relevancy Score': relevancy_scores
-    } )
+        'Candidate Name': candidates['Candidate Name'],  # Make sure column names match your DataFrame's
+        'Contact Details': candidates['Email ID'],      # Make sure column names match your DataFrame's
+        'Relevancy Score': relevancy_scores.flatten()   # Flatten the array if it's two-dimensional
+    })
     
     # Sort the candidates by the relevancy score in descending order
     sorted_candidates = output.sort_values(by='Relevancy Score', ascending=False)

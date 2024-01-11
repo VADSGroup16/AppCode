@@ -52,13 +52,12 @@ with col2:
         # Assuming resume_data is preloaded with candidate names and contact details
         resume_data = pd.read_csv('Modifiedresumedata_data.csv')
         resume_data['relevancy_score'] = relevancy_scores
+        display_columns = ['candidate_name', 'contact_details', 'relevancy_score']
+        sorted_resumes_display = sorted_resumes[display_columns]
 
-        # Sort the dataframe based on relevancy score
-        sorted_resumes = resume_data.sort_values(by='relevancy_score', ascending=False)
-
-        # Display results: Show sorted resumes with relevancy scores
+        # Display results: Show sorted resumes with relevancy scores, names, and contact details
         st.write("Relevant candidates:")
-        st.dataframe(sorted_resumes)
+        st.dataframe(sorted_resumes_display)
     else:
         st.write("Please input job details and click 'Apply' to show relevant candidates.")
 

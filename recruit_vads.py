@@ -33,7 +33,7 @@ def predict_relevancy(vectorizer, input_data, candidate_data):
         score = cosine_similarity(X_input, X_candidate)
         candidate_scores.append(score[0][0])
 
-    candidate_data['RelevancyScore'] = candidate_scores*100
+    candidate_data['RelevancyScore'] = candidate_scores
     top_candidates = candidate_data.nlargest(5, 'RelevancyScore')
     return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]
 

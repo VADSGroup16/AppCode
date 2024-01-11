@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 model = pickle.load(open('Recruit_VADS_model.pkl', 'rb'))

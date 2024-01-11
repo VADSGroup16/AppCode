@@ -69,9 +69,7 @@ with col1:
 with col2:
     if st.session_state['submitted']:
         # Get relevancy scores for each candidate
-        scores = get_relevancy_scores(form_data['role'], form_data['skills'],'0',form_data['experience'])
-        resume_data['Relevancy Score'] = scores
-        sorted_resumes = resume_data.sort_values(by='Relevancy Score', ascending=False).head(5)
+        sorted_resumes = get_relevancy_score(form_data['role'], form_data['skills'],'0',form_data['experience'])
 
         # Display top 5 relevant candidates
         st.write("Top 5 Relevant Candidates:")

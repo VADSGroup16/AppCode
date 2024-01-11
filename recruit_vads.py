@@ -50,7 +50,7 @@ with col2:
         relevancy_scores = model.predict(job_details_vectorized)
 
         # Assuming resume_data is preloaded with candidate names and contact details
-        resume_data = pd.DataFrame()  # Replace with your actual dataframe
+        resume_data = pd.read_csv('Modifiedresumedata_data.csv')
         resume_data['relevancy_score'] = relevancy_scores
 
         # Sort the dataframe based on relevancy score

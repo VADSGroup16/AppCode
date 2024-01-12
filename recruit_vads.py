@@ -17,7 +17,7 @@ def load_candidate_data():
     return pd.read_csv('Modifiedresumedata_data.csv')
 
 # Predict relevancy scores
-def predict_relevancy(model, vectorizer, input_data,candiate_data):
+def predict_relevancy(model, vectorizer, input_data,candidate_data):
     relevancy_scores = []
 
     for _, candidate_row in candidate_data.iterrows():

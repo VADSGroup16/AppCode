@@ -52,7 +52,7 @@ def predict_relevancy(model, vectorizer, input_data, candidate_data):
 # Streamlit UI layout
 st.set_page_config(page_title="Recruit VADS", layout="wide")
 
-header_image_path = "Header.png"  # Adjust the path as necessary
+header_image_path = "RecruitVADSlogo.jpg"  # Adjust the path as necessary
 st.image(header_image_path, width=700)
 
 col1, col2 = st.columns([1, 2])

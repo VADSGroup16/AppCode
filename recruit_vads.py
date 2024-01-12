@@ -16,21 +16,24 @@ def load_artifacts():
 def load_candidate_data():
     return pd.read_csv('Modifiedresumedata_data.csv')
 
-# Predict relevancy scores
-def predict_relevancy(vectorizer, input_data, candidate_data):
+# Predict relevancy scores using the linear regression model
+def predict_relevancy(model, vectorizer, input_data, candidate_data):
     combined_input = ' '.join([input_data['Role'], str(input_data['Experience']),
                                input_data['Certifications'], input_data['Skills']])
     X_input = vectorizer.transform([combined_input])
-    
+
     candidate_scores = []
     for _, row in candidate_data.iterrows():
         candidate_combined = ' '.join([row['Role'], str(row['Experience']),
                                        row['Certification'], row['Skills']])
         X_candidate = vectorizer.transform([candidate_combined])
         score = cosine_similarity(X_input, X_candidate)
-        candidate_scores.append(score[0][0])
+        # Use the linear regression model to predict the relevancy score
+        predicted_score = model.predict(score.reshape(1, -1))
+        candidate_scores.append(predicted_score[0][0])
 
     candidate_data['RelevancyScore'] = candidate_scores
+    # Convert scores to percentages and round to two decimal places
     top_candidates = candidate_data.nlargest(5, 'RelevancyScore')
     top_candidates['RelevancyScore'] = top_candidates['RelevancyScore'].apply(lambda x: f"{x*100:.2f}%")
     return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]

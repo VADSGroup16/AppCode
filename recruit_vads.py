@@ -17,23 +17,22 @@ def load_candidate_data():
     return pd.read_csv('Modifiedresumedata_data.csv')
 
 # Predict relevancy scores
-def predict_relevancy(vectorizer, input_data, candidate_data):
-    combined_input = ' '.join([input_data['Role'], str(input_data['Experience']), 
-                               input_data['Certifications'], input_data['Skills']])
-    X_input = vectorizer.transform([combined_input])
+def predict_relevancy(model, vectorizer, input_data, candidate_data):
+    relevancy_scores = []
 
-    # Calculate relevancy scores based on cosine similarity
-    candidate_scores = []
-    for _, row in candidate_data.iterrows():
-        candidate_combined = ' '.join([row['Role'], str(row['Experience']), 
-                                       row['Certification'], row['Skills']])
-        X_candidate = vectorizer.transform([candidate_combined])
-        score = cosine_similarity(X_input, X_candidate)
-        candidate_scores.append(score[0][0])
+    for _, candidate_row in candidate_data.iterrows():
+        # Combine user input and candidate data into a single string
+        combined_input = ' '.join([input_data['Role'], str(input_data['Experience']),
+                                   input_data['Certifications'], input_data['Skills'],
+                                   candidate_row['Role'], str(candidate_row['Experience']),
+                                   candidate_row['Certification'], candidate_row['Skills']])
+        X = vectorizer.transform([combined_input])
 
-    candidate_data['RelevancyScore'] = candidate_scores
-    # Convert scores to percentages and round to two decimal places
-    candidate_data['RelevancyScore'] = (candidate_data['RelevancyScore'] * 100).round(2)
+        # Use the model to predict relevancy score
+        score = model.predict(X)
+        relevancy_scores.append(score[0])
+
+    candidate_data['RelevancyScore'] = relevancy_scores
     top_candidates = candidate_data.nlargest(5, 'RelevancyScore')
     return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]
 

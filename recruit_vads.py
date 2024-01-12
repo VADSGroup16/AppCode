@@ -34,7 +34,11 @@ def predict_relevancy(model, vectorizer, input_data, candidate_data):
         # Check if score array is not empty and reshape for prediction
         if score.size > 0:
             predicted_score = model.predict(score.reshape(1, -1))
-            candidate_scores.append(predicted_score[0][0])
+            # Check if predicted_score is an array and extract the value
+            if isinstance(predicted_score, np.ndarray):
+                candidate_scores.append(predicted_score[0])
+            else:  # if predicted_score is a scalar
+                candidate_scores.append(predicted_score)
         else:
             # Handle empty score array
             candidate_scores.append(0)  # Example: appending a default score of 0
@@ -44,7 +48,6 @@ def predict_relevancy(model, vectorizer, input_data, candidate_data):
     top_candidates['RelevancyScore'] = top_candidates['RelevancyScore'].apply(lambda x: f"{x*100:.2f}%")
 
     return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]
-
 # Streamlit UI layout
 st.set_page_config(page_title="Recruit VADS", layout="wide")
 

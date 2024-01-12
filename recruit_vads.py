@@ -23,7 +23,7 @@ def predict_relevancy(model, vectorizer, input_data):
     for _, candidate_row in candidate_data.iterrows():
         # Combine user input and candidate data into a single string
         combined_input = ' '.join([input_data['Role'], str(input_data['Experience']),
-                                   input_data['Certifications'], input_data['Skills'])
+                                   input_data['Certifications'], input_data['Skills']])
         X = vectorizer.transform([combined_input])
 
         # Use the model to predict relevancy score

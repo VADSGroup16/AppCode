@@ -17,15 +17,13 @@ def load_candidate_data():
     return pd.read_csv('Modifiedresumedata_data.csv')
 
 # Predict relevancy scores
-def predict_relevancy(model, vectorizer, input_data, candidate_data):
+def predict_relevancy(model, vectorizer, input_data):
     relevancy_scores = []
 
     for _, candidate_row in candidate_data.iterrows():
         # Combine user input and candidate data into a single string
         combined_input = ' '.join([input_data['Role'], str(input_data['Experience']),
-                                   input_data['Certifications'], input_data['Skills'],
-                                   candidate_row['Role'], str(candidate_row['Experience']),
-                                   candidate_row['Certification'], candidate_row['Skills']])
+                                   input_data['Certifications'], input_data['Skills'])
         X = vectorizer.transform([combined_input])
 
         # Use the model to predict relevancy score
@@ -75,7 +73,7 @@ candidate_data = load_candidate_data()
 # Display results
 with col2:
     if st.session_state['submitted']:
-        top_candidates = predict_relevancy(model, vectorizer, form_data, candidate_data)
+        top_candidates = predict_relevancy(model, vectorizer, form_data)
         st.write('Top Candidate Matches:')
         st.dataframe(top_candidates)
     else:

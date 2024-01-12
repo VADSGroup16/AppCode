@@ -75,7 +75,7 @@ candidate_data = load_candidate_data()
 # Display results
 with col2:
     if st.session_state['submitted']:
-        top_candidates = predict_relevancy(model, vectorizer, user_input, candidate_data)
+        top_candidates = predict_relevancy(model, vectorizer, form_data, candidate_data)
         st.write('Top Candidate Matches:')
         st.dataframe(top_candidates)
     else:

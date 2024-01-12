@@ -33,10 +33,8 @@ def predict_relevancy(vectorizer, input_data, candidate_data):
         candidate_scores.append(score[0][0])
     candidate_data['RelevancyScore'] = candidate_scores
     # Convert scores to percentages and round to two decimal places
-    candidate_data['RelevancyScore'] = (candidate_data['RelevancyScore'] * 100).round(2)
-    # Convert the 'RelevancyScore' column to a string and add the '%' symbol
-    candidate_data['RelevancyScore'] = candidate_data['RelevancyScore'].astype(str) + '%'
     top_candidates = candidate_data.nlargest(5, 'RelevancyScore')
+    top_candidates['RelevancyScore'] = top_candidates['RelevancyScore'].apply(lambda x: f"{x*100:.2f}%")
     return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]
 
 # Streamlit UI layout

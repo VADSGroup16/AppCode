@@ -34,6 +34,8 @@ def predict_relevancy(vectorizer, input_data, candidate_data):
     candidate_data['RelevancyScore'] = candidate_scores
     # Convert scores to percentages and round to two decimal places
     candidate_data['RelevancyScore'] = (candidate_data['RelevancyScore'] * 100).round(2)
+    # Convert the 'RelevancyScore' column to a string and add the '%' symbol
+    candidate_data['RelevancyScore'] = candidate_data['RelevancyScore'].astype(str) + '%'
     top_candidates = candidate_data.nlargest(5, 'RelevancyScore')
     return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]
 

@@ -17,14 +17,21 @@ def load_candidate_data():
     return pd.read_csv('Modifiedresumedata_data.csv')
 
 # Predict relevancy scores
-def predict_relevancy(model, vectorizer, input_data,candidate_data):
+def predict_relevancy(model, vectorizer, input_data, candidate_data):
     relevancy_scores = []
 
+    # Combine user input into a single string
+    user_combined_input = ' '.join([input_data['Role'], str(input_data['Experience']),
+                                    input_data['Certifications'], input_data['Skills']])
+
     for _, candidate_row in candidate_data.iterrows():
-        # Combine user input and candidate data into a single string
-        combined_input = ' '.join([input_data['Role'], str(input_data['Experience']),
-                                   input_data['Certifications'], input_data['Skills']])
-        X = vectorizer.transform([combined_input])
+        # Combine each candidate's data with user input
+        candidate_combined_input = ' '.join([user_combined_input,
+                                             candidate_row['Role'], 
+                                             str(candidate_row['Experience']),
+                                             candidate_row['Certification'], 
+                                             candidate_row['Skills']])
+        X = vectorizer.transform([candidate_combined_input])
 
         # Use the model to predict relevancy score
         score = model.predict(X)
@@ -33,6 +40,7 @@ def predict_relevancy(model, vectorizer, input_data,candidate_data):
     candidate_data['RelevancyScore'] = relevancy_scores
     top_candidates = candidate_data.nlargest(5, 'RelevancyScore')
     return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]
+
 
 # Streamlit UI layout
 st.set_page_config(page_title="Recruit VADS", layout="wide")

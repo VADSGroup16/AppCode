@@ -17,16 +17,13 @@ def load_candidate_data():
     return pd.read_csv('Modifiedresumedata_data.csv')
 
 # Predict relevancy scores using the linear regression model
-# Predict relevancy scores using the linear regression model
 def predict_relevancy(model, vectorizer, input_data, candidate_data):
-    # Combine the input data into a single string for vectorization
     combined_input = ' '.join([input_data['Role'], str(input_data['Experience']),
                                input_data['Certifications'], input_data['Skills']])
     X_input = vectorizer.transform([combined_input])
 
     candidate_scores = []
     for _, row in candidate_data.iterrows():
-        # Combine candidate data into a single string for vectorization
         candidate_combined = ' '.join([row['Role'], str(row['Experience']),
                                        row['Certification'], row['Skills']])
         X_candidate = vectorizer.transform([candidate_combined])
@@ -34,21 +31,19 @@ def predict_relevancy(model, vectorizer, input_data, candidate_data):
         # Calculate cosine similarity
         score = cosine_similarity(X_input, X_candidate)
 
-        # Predict the relevancy score using the linear regression model
-        predicted_score = model.predict(score.reshape(1, -1))
+        # Check if score array is not empty and reshape for prediction
+        if score.size > 0:
+            predicted_score = model.predict(score.reshape(1, -1))
+            candidate_scores.append(predicted_score[0][0])
+        else:
+            # Handle empty score array
+            candidate_scores.append(0)  # Example: appending a default score of 0
 
-        # Append the predicted score (first element of the returned array)
-        candidate_scores.append(predicted_score[0][0])
-
-    # Add the predicted scores to the candidate data and format the output
     candidate_data['RelevancyScore'] = candidate_scores
     top_candidates = candidate_data.nlargest(5, 'RelevancyScore')
-
-    # Format the relevancy scores as percentages
     top_candidates['RelevancyScore'] = top_candidates['RelevancyScore'].apply(lambda x: f"{x*100:.2f}%")
 
     return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]
-
 
 # Streamlit UI layout
 st.set_page_config(page_title="Recruit VADS", layout="wide")

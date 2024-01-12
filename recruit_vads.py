@@ -45,7 +45,7 @@ def predict_relevancy(model, vectorizer, input_data, candidate_data):
             candidate_scores.append(0)  # Example: appending a default score of 0
 
     candidate_data['RelevancyScore'] = candidate_scores
-    top_candidates = candidate_data.nlargest(5, 'RelevancyScore')
+    top_candidates = candidate_data.sort_values(by='RelevancyScore', ascending=False)
     top_candidates['RelevancyScore'] = top_candidates['RelevancyScore'].apply(lambda x: f"{x*100:.2f}%")
 
     return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]

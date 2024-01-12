@@ -17,30 +17,26 @@ def load_candidate_data():
     return pd.read_csv('Modifiedresumedata_data.csv')
 
 # Predict relevancy scores
-def predict_relevancy(model, vectorizer, input_data, candidate_data):
-    relevancy_scores = []
+def predict_relevancy(vectorizer, input_data, candidate_data):
+    combined_input = ' '.join([input_data['Role'], str(input_data['Experience']), 
+                               input_data['Certifications'], input_data['Skills']])
+    X_input = vectorizer.transform([combined_input])
 
-    # Combine user input into a single string
-    user_combined_input = ' '.join([input_data['Role'], str(input_data['Experience']),
-                                    input_data['Certifications'], input_data['Skills']])
+    # Calculate relevancy scores based on cosine similarity
+    candidate_scores = []
+    for _, row in candidate_data.iterrows():
+        candidate_combined = ' '.join([row['Role'], str(row['Experience']), 
+                                       row['Certification'], row['Skills']])
+        X_candidate = vectorizer.transform([candidate_combined])
+        score = cosine_similarity(X_input, X_candidate)
+        relevancy_scores = model.predict(score)
+        candidate_scores.append(relevancy_scores[0][0])
 
-    for _, candidate_row in candidate_data.iterrows():
-        # Combine each candidate's data with user input
-        candidate_combined_input = ' '.join([user_combined_input,
-                                             candidate_row['Role'], 
-                                             str(candidate_row['Experience']),
-                                             candidate_row['Certification'], 
-                                             candidate_row['Skills']])
-        X = vectorizer.transform([candidate_combined_input])
-
-        # Use the model to predict relevancy score
-        score = model.predict(X)
-        relevancy_scores.append(score[0])
-
-    candidate_data['RelevancyScore'] = relevancy_scores
+    candidate_data['RelevancyScore'] = candidate_scores
+    # Convert scores to percentages and round to two decimal places
+    candidate_data['RelevancyScore'] = (candidate_data['RelevancyScore'] * 100).round(2)
     top_candidates = candidate_data.nlargest(5, 'RelevancyScore')
     return top_candidates[['Candidate Name', 'Email ID', 'RelevancyScore']]
-
 
 # Streamlit UI layout
 st.set_page_config(page_title="Recruit VADS", layout="wide")
@@ -81,7 +77,7 @@ candidate_data = load_candidate_data()
 # Display results
 with col2:
     if st.session_state['submitted']:
-        top_candidates = predict_relevancy(model, vectorizer, form_data, candidate_data)
+        top_candidates = predict_relevancy(vectorizer, form_data, candidate_data)
         st.write('Top Candidate Matches:')
         st.dataframe(top_candidates)
     else:
